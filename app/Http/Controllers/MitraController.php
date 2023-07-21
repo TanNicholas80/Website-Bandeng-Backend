@@ -21,4 +21,10 @@ class MitraController extends Controller
         $mitra->save();
         return $mitra;
     }
+    function generatecrsf() {
+        $token = [
+            "token"=>'Hello',
+        ]; 
+        return $token;
+    }
 }
