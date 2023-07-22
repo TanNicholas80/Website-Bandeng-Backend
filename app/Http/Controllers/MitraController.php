@@ -2,29 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\MitraVerification;
 use Illuminate\Http\Request;
 use App\Models\Mitra;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 
 class MitraController extends Controller
 {
-    function register(request $req) {
-        $mitra = new Mitra();
-        $mitra->namaMitra = $req->input('namaMitra');
-        $mitra->alamatMitra = $req->input('alamatMitra');
-        $mitra->tglLahir = $req->input('tglLahir');
-        $mitra->jeniskel = $req->input('jeniskel');
-        $mitra->no_tlp = $req->input('no_tlp');
-        $mitra->foto_mitra = $req->input('foto_mitra');
-        $mitra->email = $req->input('email');
-        $mitra->password = Hash::make($req->input('password'));
-        $mitra->save();
-        return $mitra;
+    public function register(Request $req) {
+        $validator = Validator::make($req->all(), [
+            'namaMitra' => 'required',
+            'alamatMitra' => 'required',
+            'tglLahir' => 'required',
+            'email' => 'required|email|unique:mitras',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 401,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        $mitra = Mitra::create([
+            'namaMitra' => $req->namaMitra,
+            'alamatMitra' => $req->alamatMitra,
+            'tglLahir' => $req->tglLahir,
+            'jeniskel' => $req->jeniskel,
+            'no_tlp' => $req->no_tlp,
+            'foto_mitra' => $req->foto_mitra,
+            'email' => $req->email,
+            'password' => Hash::make($req->password),
+        ]);
+        if ($mitra) {
+            try {
+                Mail::mailer('smtp')->to($mitra->email)->send(new MitraVerification($mitra));
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Registered, verify your email address to login",
+                ], 200);
+            } catch(\Exception $err) {
+                $mitra->delete();
+                
+                return response()->json([
+                    'status' => 500,
+                    'errors' => $err,
+                ], 500);
+            }
+        }
+        return response()->json([
+            'status' => 500,
+            'message' => "Failed To Create Mitra"
+        ]);
     }
-    function generatecrsf() {
-        $token = [
-            "token"=>'Hello',
-        ]; 
-        return $token;
+    function login(Request $req) {
+        $mitra = Mitra::where('email', $req->email)->first();
+        if(!$mitra || !Hash::check($req->password, $mitra->password)) {
+            return ["Error" => "Sorry, email or password doesn't match"];
+        }
+        return $mitra;
     }
 }

@@ -13,15 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mitra', function (Blueprint $table) {
-            $table->id('idMitra');
+        Schema::create('mitras', function (Blueprint $table) {
+            $table->id()->primary();
+            $table->string('namaLengkap');
             $table->string('namaMitra');
             $table->string('alamatMitra');
             $table->date('tglLahir');
             $table->string('jeniskel');
-            $table->integer('no_tlp');
+            $table->string('no_tlp');
             $table->string('foto_mitra');
-            $table->string('email');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
         });
     }

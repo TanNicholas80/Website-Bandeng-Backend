@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MitraController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,5 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('register', [MitraController::class, 'register']);
-Route::get('generatecrsf', [MitraController::class, 'generatecrsf']);
+Route::group(['prefix' => 'v1'], function() {
+    Route::post('register', [MitraController::class, 'register']);
+    Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+});
+Route::post('login', [MitraController::class, 'login']);

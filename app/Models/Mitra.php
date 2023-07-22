@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Mitra extends Model
+class Mitra extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'namaMitra',
