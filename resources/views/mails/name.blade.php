@@ -10,6 +10,6 @@
     <h1>Mitra Email Verification</h1>
     <p>Hello {{ $mitra->namaMitra }}</p>
     <p>Please Click The Button Below to Verify your Email</p>
-    <a href="{{URL::temporarySignedRoute('verification.verify', now()->addMinutes(30), ['id' => $mitra->id])}}" target="_blank" class="button button-primary">Verify Email Address</a>
+    <a href="{{URL::temporarySignedRoute('verification.verify', now()->addMinutes(30), ['id' => $mitra->id, 'hash' => sha1($mitra->id)])}}" class="button button-primary" data-method="get">Verify Email Address</a>
 </body>
 </html>

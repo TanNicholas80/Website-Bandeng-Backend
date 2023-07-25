@@ -21,7 +21,7 @@ class MitraVerification extends Mailable
      */
     public $mitra;
 
-    public function __construct(Mitra $mitra)
+    public function __construct($mitra)
     {
         $this->mitra = $mitra;
     }

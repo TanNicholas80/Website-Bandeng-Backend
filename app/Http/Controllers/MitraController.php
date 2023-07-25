@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Mail\MitraVerification;
 use Illuminate\Http\Request;
 use App\Models\Mitra;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\JsonResponse;
 
 class MitraController extends Controller
 {
@@ -35,26 +35,35 @@ class MitraController extends Controller
             'email' => $req->email,
             'password' => Hash::make($req->password),
         ]);
-        if ($mitra) {
-            try {
-                Mail::mailer('smtp')->to($mitra->email)->send(new MitraVerification($mitra));
-                return response()->json([
-                    'status' => 200,
-                    'message' => "Registered, verify your email address to login",
-                ], 200);
-            } catch(\Exception $err) {
-                $mitra->delete();
-                
-                return response()->json([
-                    'status' => 500,
-                    'errors' => $err,
-                ], 500);
-            }
+        try {
+            Mail::to($mitra)->send(new MitraVerification($mitra));
+            echo 'suk';
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
-        return response()->json([
-            'status' => 500,
-            'message' => "Failed To Create Mitra"
-        ]);
+        // if ($mitra) {
+        //     try {
+        //         return response()->json([
+        //             'status' => 200,
+        //             'message' => "Registered, verify your email address to login",
+        //         ], 200);
+
+        //         // echo 'as';
+        //     } catch(Exception $err) {
+        //         $mitra->delete();
+                
+        //         return response($err)->json([
+        //             'status' => 500,
+        //             'errors' => $err,
+        //         ], 500);
+
+        //         echo 'er';
+        //     }
+        // }
+        // return response()->json([
+        //     'status' => 500,
+        //     'message' => "Failed To Create Mitra"
+        // ]);
     }
     function login(Request $req) {
         $mitra = Mitra::where('email', $req->email)->first();

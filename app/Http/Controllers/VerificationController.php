@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Mitra;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class VerificationController extends Controller
 {
@@ -13,7 +12,7 @@ class VerificationController extends Controller
             return response()->json(['msg' => 'Invalid / Expired url provided.'], 401);
         }
 
-        $mitra = Mitra::findOrFail($mitra_id);
+        $mitra = Mitra::find($mitra_id);
 
         if(!$mitra->hasVerifiedEmail()) {
             $mitra->markEmailAsVerified();

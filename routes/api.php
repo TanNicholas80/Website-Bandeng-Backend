@@ -23,4 +23,6 @@ Route::group(['prefix' => 'v1'], function() {
     Route::post('register', [MitraController::class, 'register']);
     Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 });
+Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
+});
