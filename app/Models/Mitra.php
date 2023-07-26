@@ -12,6 +12,7 @@ class Mitra extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'namaLengkap',
         'namaMitra',
         'alamatMitra',
         'tglLahir',
@@ -19,6 +20,7 @@ class Mitra extends Authenticatable implements MustVerifyEmail
         'no_tlp',
         'foto_mitra',
         'email',
+        'email_verified_at',
         'password',
     ];
 

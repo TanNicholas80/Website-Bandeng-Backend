@@ -9,15 +9,18 @@ use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class MitraController extends Controller
 {
+    // Fitur Register untuk Frontend
     public function register(Request $req) {
         $validator = Validator::make($req->all(), [
             'namaMitra' => 'required',
             'alamatMitra' => 'required',
             'tglLahir' => 'required',
             'email' => 'required|email|unique:mitras',
+            'password' => 'required|min:8'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -41,35 +44,36 @@ class MitraController extends Controller
         } catch (Exception $e) {
             echo $e->getMessage();
         }
-        // if ($mitra) {
-        //     try {
-        //         return response()->json([
-        //             'status' => 200,
-        //             'message' => "Registered, verify your email address to login",
-        //         ], 200);
-
-        //         // echo 'as';
-        //     } catch(Exception $err) {
-        //         $mitra->delete();
-                
-        //         return response($err)->json([
-        //             'status' => 500,
-        //             'errors' => $err,
-        //         ], 500);
-
-        //         echo 'er';
-        //     }
-        // }
-        // return response()->json([
-        //     'status' => 500,
-        //     'message' => "Failed To Create Mitra"
-        // ]);
     }
+    // Fitur Login untuk Frontend
     function login(Request $req) {
         $mitra = Mitra::where('email', $req->email)->first();
-        if(!$mitra || !Hash::check($req->password, $mitra->password)) {
-            return ["Error" => "Sorry, email or password doesn't match"];
+        if(!$mitra) {
+            return ["Error" => "Maaf, Email Anda Belum Terdaftar"];
+        }
+        if(!Hash::check($req->password, $mitra->password)) {
+            return ["Error" => "Maaf, Password yang ada masukan salah"];
+        }
+        if(!$mitra->hasVerifiedEmail()) {
+            return ["Error" => "Email Anda belum verified"];
         }
         return $mitra;
+    }
+    function forgotPassword(Request $req) {
+        try {
+            $mitra = Mitra::where('email', $req->email)->first();
+            if($mitra->email != null) {
+                $input = $req->only(['password']);
+                $mitra->password = Hash::make($input['password']);
+                $mitra->save();
+            }
+            echo $mitra;
+        } catch(Exception $e) {
+            echo $e->getMessage();
+            // return response($e)->json([
+            //     'status' => 401,
+            //     'msg' => $e->getMessage()
+            // ], 422);
+        }
     }
 }

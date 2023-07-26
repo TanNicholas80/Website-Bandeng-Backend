@@ -9,23 +9,25 @@ class VerificationController extends Controller
 {
     public function verify($mitra_id, Request $req ) {
         if(!$req->hasValidSignature()) {
-            return response()->json(['msg' => 'Invalid / Expired url provided.'], 401);
+            return view('mails.resend', ['msg' => 'Invalid / Expired url provided.'], 401);
         }
 
         $mitra = Mitra::find($mitra_id);
 
         if(!$mitra->hasVerifiedEmail()) {
             $mitra->markEmailAsVerified();
+            return view('mails.success', ['status' => 200, 'message' => "Your Email $mitra->email Successfully Verified"]);
         } else {
-            return response()->json([
-                "status" => 400,
-                "message" => "Email Already Verified"
-            ], 400);
+            // return response()->json([
+            //     "status" => 400,
+            //     "message" => "Email Already Verified"
+            // ], 400);
+            return view('mails.error', ['status' => 400, 'message' => "Email Already Verified"]);
         }
 
-        return response()->json([
-            "status" => 200,
-            "message" => "Your Email $mitra->email Successfully Verified",
-        ], 200);
+        // return response()->json([
+        //     "status" => 200,
+        //     "message" => "Your Email $mitra->email Successfully Verified",
+        // ], 200);
     }
 }

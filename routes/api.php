@@ -25,4 +25,5 @@ Route::group(['prefix' => 'v1'], function() {
 });
 Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
+Route::post('login/forgot-password', [MitraController::class, 'forgotPassword']);
 });
