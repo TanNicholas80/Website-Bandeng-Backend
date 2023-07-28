@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
@@ -27,3 +28,6 @@ Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
 Route::post('login/forgot-password', [MitraController::class, 'forgotPassword']);
 });
+Route::post('article', [ArticleController::class, 'store']);
+Route::put('article/edit/{id}', [ArticleController::class, 'update']);
+Route::delete('article/delete/{id}', [ArticleController::class, 'destroy']);

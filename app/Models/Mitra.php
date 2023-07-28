@@ -30,4 +30,9 @@ class Mitra extends Authenticatable implements MustVerifyEmail
     ];
 
     public $timestamps = false;
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
