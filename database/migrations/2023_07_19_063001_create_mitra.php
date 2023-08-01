@@ -14,14 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('mitras', function (Blueprint $table) {
-            $table->id()->primary();
-            $table->string('namaLengkap');
+            $table->id();
+            $table->string('namaLengkap')->nullable();
             $table->string('namaMitra');
             $table->string('alamatMitra');
-            $table->date('tglLahir');
-            $table->string('jeniskel');
+            $table->date('tglLahir')->nullable();
+            $table->string('jeniskel')->nullable();
             $table->string('no_tlp');
-            $table->string('foto_mitra');
+            $table->string('foto_mitra')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

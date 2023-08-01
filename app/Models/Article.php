@@ -12,5 +12,6 @@ class Article extends Model
     protected $fillable = [
         'jdlArticle',
         'isiArticle',
+        'foto_article'
     ];
 }

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Product;
 
 class Mitra extends Authenticatable implements MustVerifyEmail
 {
@@ -30,7 +31,7 @@ class Mitra extends Authenticatable implements MustVerifyEmail
     ];
 
     public $timestamps = false;
-
+    // satu mitra dapat memiliki banyak produk
     public function products()
     {
         return $this->hasMany(Product::class);
