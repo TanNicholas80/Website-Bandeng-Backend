@@ -3,14 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-// use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-// use Illuminate\Mail\Mailables\Content;
-// use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Mitra;
 
-class MitraVerification extends Mailable
+class UserMitraToAdmin extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,11 +18,11 @@ class MitraVerification extends Mailable
      *
      * @return void
      */
-    public $mitra;
+    public $contact;
 
-    public function __construct($mitra)
+    public function __construct($contact)
     {
-        $this->mitra = $mitra;
+        $this->contact = $contact;
     }
 
     /** 
@@ -32,10 +31,10 @@ class MitraVerification extends Mailable
      * @return $this
      */
 
-    public function build() {
-        return $this->from('dbandengkrobokan@gmail.com', 'DBandeng')
-                    ->subject('Verifikasi Email')
-                    ->view('mails.name');
+     public function build() {
+        return $this->from($this->contact->emailCn, $this->contact->nameCn)
+                    ->subject('Pengajuan Mitra')
+                    ->view('mails.mitraUser');
     }
 
     // /**
@@ -46,8 +45,7 @@ class MitraVerification extends Mailable
     // public function envelope()
     // {
     //     return new Envelope(
-    //         from: 'tannicholas54@gmail.com',
-    //         subject: 'Mitra Verification',
+    //         subject: 'User Mitra To Admin',
     //     );
     // }
 
@@ -59,7 +57,7 @@ class MitraVerification extends Mailable
     // public function content()
     // {
     //     return new Content(
-    //         view: 'mails.name',
+    //         view: 'view.name',
     //     );
     // }
 

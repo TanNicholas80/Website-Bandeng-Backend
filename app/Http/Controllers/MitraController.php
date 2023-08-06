@@ -35,6 +35,11 @@ class MitraController extends Controller
             'email' => $req->email,
             'password' => Hash::make($req->password),
         ]);
+        if(!$mitra) {
+            return response()->json(['error' => 'Akun Mitra Gagal Terbuat'], 500);
+        } else {
+            return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
+        }
         try {
             Mail::to($mitra)->send(new MitraVerification($mitra));
             echo 'suk';
@@ -46,15 +51,15 @@ class MitraController extends Controller
     public function login(Request $req) {
         $mitra = Mitra::where('email', $req->email)->first();
         if(!$mitra) {
-            return ["Error" => "Maaf, Email Anda Belum Terdaftar"];
+            return response()->json(['error' => 'Maaf, Email Anda Belum Terdaftar'], 404);
         }
         if(!Hash::check($req->password, $mitra->password)) {
-            return ["Error" => "Maaf, Password yang ada masukan salah"];
+            return response()->json(['error' => 'Maaf, Password yang Anda masukkan salah'], 401);
         }
         if(!$mitra->hasVerifiedEmail()) {
-            return ["Error" => "Email Anda belum verified"];
+            return response()->json(['error' => 'Email Anda Belum Terverifikasi'], 403);
         }
-        return $mitra;
+        return response()->json($mitra, 200);
     }
     public function forgotPassword(Request $req) {
         try {
@@ -63,8 +68,9 @@ class MitraController extends Controller
                 $input = $req->only(['password']);
                 $mitra->password = Hash::make($input['password']);
                 $mitra->save();
+            } else {
+                return response()->json(['error' => 'Maaf, Email Tidak Ditemukan'], 404);
             }
-            echo $mitra;
         } catch(Exception $e) {
             echo $e->getMessage();
             // return response($e)->json([
@@ -90,7 +96,10 @@ class MitraController extends Controller
                 if($req->oldImage) {
                     Storage::delete($req->oldImage);
                 }
-                $validator['foto_mitra'] = $req->file('foto_mitra')->store('mitra-images');
+                $imgMitraPath = $req->file('foto_mitra')->store('mitra-images');
+                if($imgMitraPath) {
+                    echo 'Penyimpanan Gambar Mitra sudah benar';
+                }
             }
     
             $mitra = Mitra::find($id);
@@ -103,8 +112,9 @@ class MitraController extends Controller
             $update = $mitra->update();
 
             if($update) {
-                echo('Success Update Article');
-                echo($mitra);
+                return response()->json(['response' => 'Profil Mitra Sukses Terupdate'], 200);
+            } else {
+                return response()->json(['error' => 'Profil Mitra Gagal Terupdate'], 403);
             }
         } catch(Exception $e) {
             echo $e->getMessage();

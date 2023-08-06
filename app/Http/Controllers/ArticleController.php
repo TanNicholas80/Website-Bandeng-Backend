@@ -20,19 +20,22 @@ class ArticleController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 401,
-                    'errors' => $validator->errors(),
+                    'error' => $validator->errors(),
                 ], 422);
             }
-    
+            $validator = $req->all();
             if($req->file('foto_article')) {
-                $validator['foto_article'] = $req->file('foto_article')->store('article-images');
+                $imgArticlePath = $req->file('foto_article')->store('public/article-images');
+                $validator['foto_article'] = $imgArticlePath;
             }
     
             $input = $req->only(['jdlArticle', 'isiArticle', 'foto_article']);
             $create = Article::create($input);
     
             if($create) {
-                echo('Success Create Article');
+                return response()->json(['response' => 'Article Berhasil Terbuat', 'path' => $imgArticlePath], 200);
+            } else {
+                return response()->json(['error' => 'Article Gagal Terbuat'], 500);
             }
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -56,7 +59,7 @@ class ArticleController extends Controller
     public function update(Request $req, $id) {
         try {
             $validator = Validator::make($req->all(), [
-                'foto_article' => 'required|image|file|max:5024'
+                'foto_article' => 'image|file|max:5024'
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -69,7 +72,10 @@ class ArticleController extends Controller
                 if($req->oldImage) {
                     Storage::delete($req->oldImage);
                 }
-                $validator['foto_article'] = $req->file('foto_article')->store('article-images');
+                $imgArticlePath = $req->file('foto_article')->store('public/article-images');
+                if($imgArticlePath) {
+                    echo 'Update Gambar Article sudah benar';
+                }
             }
 
             $article = Article::find($id);
@@ -79,8 +85,9 @@ class ArticleController extends Controller
             $update = $article->update();
 
             if($update) {
-                echo('Success Update Article');
-                echo($article);
+                return response()->json(['response' => 'Article Sukses Terupdate'], 200);
+            } else {
+                return response()->json(['error' => 'Article Gagal Terupdate'], 500);
             }
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -96,8 +103,13 @@ class ArticleController extends Controller
             $delete = $article->delete();
 
             if($delete) {
-            // Notification Delete
-                echo('Success Delete Article');
+                // Notification Delete
+                return response()->json([
+                    'response' => 'Article Sukses Terhapus',
+                    'path' => $req->foto_article
+                ], 200);
+            } else {
+                return response()->json(['error' => 'Article Gagal Terhapus'], 500);
             }
         } catch(Exception $e) {
             echo $e->getMessage();

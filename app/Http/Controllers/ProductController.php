@@ -29,7 +29,10 @@ class ProductController extends Controller
             }
 
             if($req->file('foto_produk')) {
-                $validator['foto_produk'] = $req->file('foto_produk')->store('produk-images');
+                $imgProdukPath = $req->file('foto_produk')->store('produk-images');
+                if($imgProdukPath) {
+                    echo 'Penyimpanan Gambar Produk sudah benar';
+                }
             }
 
             // mencari id mitra
@@ -83,7 +86,10 @@ class ProductController extends Controller
                 if($req->oldImage) {
                     Storage::delete($req->oldImage);
                 }
-                $validator['foto_produk'] = $req->file('foto_produk')->store('produk-images');
+                $imgProdukPath = $req->file('foto_produk')->store('produk-images');
+                if($imgProdukPath) {
+                    echo 'Update Gambar Produk sudah benar';
+                }
             }
 
             // mencari id mitra

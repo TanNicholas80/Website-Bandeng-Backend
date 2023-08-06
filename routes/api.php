@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VerificationController;
@@ -41,3 +42,5 @@ Route::post('product/{mitraId}', [ProductController::class, 'createProduct']);
 Route::get('product/read/{mitraId}', [ProductController::class, 'getProductsByMitra']);
 route::put('product/edit/{mitraId}/{productId}', [ProductController::class, 'updateProduct']);
 route::delete('product/delete/{mitraId}/{productId}', [ProductController::class, 'deleteProduct']);
+
+Route::post('contact/kirim', [ContactController::class, 'kirimPesan']);
