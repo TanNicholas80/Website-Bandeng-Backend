@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('mitras', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('namaLengkap')->nullable();
             $table->string('namaMitra');
             $table->string('alamatMitra');
@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->rememberToken();
         });
     }
 

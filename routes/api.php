@@ -19,28 +19,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+Route::middleware(['auth:sanctum'])->get('/mitra', [MitraController::class, 'show']);
 Route::group(['prefix' => 'v1'], function() {
     Route::post('register', [MitraController::class, 'register']);
     Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
-    Route::put('mitra/edit/{id}', [MitraController::class, 'editProfile']);
-    Route::get('mitra/read/{id}', [MitraController::class, 'getMitra']);
+    Route::middleware(['auth:sanctum'])->post('mitra/edit/{id}', [MitraController::class, 'editProfile']);
+    Route::middleware(['auth:sanctum'])->get('mitra/read/{id}', [MitraController::class, 'getMitra']);
 });
 Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
-Route::post('login/forgot-password', [MitraController::class, 'forgotPassword']);
+Route::post('login/forgot-password', [MitraController::class, 'reqPasswordBaru']);
+Route::post('login/reset-password', [MitraController::class, 'forgotPassword']);
 });
 
-Route::post('article', [ArticleController::class, 'store']);
+Route::middleware(['auth:sanctum'])->post('article', [ArticleController::class, 'store']);
 Route::get('article/read/{id}', [ArticleController::class, 'getArticle']);
-Route::put('article/edit/{id}', [ArticleController::class, 'update']);
-Route::delete('article/delete/{id}', [ArticleController::class, 'destroy']);
+Route::middleware(['auth:sanctum'])->post('article/edit/{id}', [ArticleController::class, 'update']);
+Route::middleware(['auth:sanctum'])->delete('article/delete/{id}', [ArticleController::class, 'destroy']);
 
-Route::post('product/{mitraId}', [ProductController::class, 'createProduct']);
+Route::middleware(['auth:sanctum'])->post('product/{mitraId}', [ProductController::class, 'createProduct']);
 Route::get('product/read/{mitraId}', [ProductController::class, 'getProductsByMitra']);
-route::put('product/edit/{mitraId}/{productId}', [ProductController::class, 'updateProduct']);
-route::delete('product/delete/{mitraId}/{productId}', [ProductController::class, 'deleteProduct']);
+route::middleware(['auth:sanctum'])->post('product/edit/{mitraId}/{productId}', [ProductController::class, 'updateProduct']);
+route::middleware(['auth:sanctum'])->delete('product/delete/{mitraId}/{productId}', [ProductController::class, 'deleteProduct']);
 
 Route::post('contact/kirim', [ContactController::class, 'kirimPesan']);

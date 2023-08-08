@@ -25,15 +25,18 @@ class ArticleController extends Controller
             }
             $validator = $req->all();
             if($req->file('foto_article')) {
-                $imgArticlePath = $req->file('foto_article')->store('public/article-images');
+                $imgArticlePath = $req->file('foto_article')->store('article-images');
                 $validator['foto_article'] = $imgArticlePath;
+                $imgArticlePath = "storage/" . $imgArticlePath;
             }
     
-            $input = $req->only(['jdlArticle', 'isiArticle', 'foto_article']);
-            $create = Article::create($input);
-    
-            if($create) {
-                return response()->json(['response' => 'Article Berhasil Terbuat', 'path' => $imgArticlePath], 200);
+            $article = Article::create([
+                'jdlArticle' => $req->jdlArticle,
+                'isiArticle' => $req->isiArticle,
+                'foto_article' => $imgArticlePath
+            ]);
+            if($article) {
+                return response()->json(['response' => 'Article Berhasil Terbuat'], 200);
             } else {
                 return response()->json(['error' => 'Article Gagal Terbuat'], 500);
             }
@@ -59,7 +62,7 @@ class ArticleController extends Controller
     public function update(Request $req, $id) {
         try {
             $validator = Validator::make($req->all(), [
-                'foto_article' => 'image|file|max:5024'
+                'foto_article' => 'required|image|file|max:5024'
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -67,23 +70,22 @@ class ArticleController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-
+            $validator = $req->all();
             if($req->file('foto_article')) {
-                if($req->oldImage) {
-                    Storage::delete($req->oldImage);
-                }
-                $imgArticlePath = $req->file('foto_article')->store('public/article-images');
-                if($imgArticlePath) {
-                    echo 'Update Gambar Article sudah benar';
-                }
+                $imgArticlePath = $req->file('foto_article')->store('article-images');
+                $validator['foto_article'] = $imgArticlePath;
+                $imgArticlePath = "storage/" . $imgArticlePath;
             }
 
             $article = Article::find($id);
+            $split = explode('/',$article->foto_article,2);
+            $filename = $split[1];
+            Storage::delete($filename);
+
             $article->jdlArticle = $req->jdlArticle;
             $article->isiArticle = $req->isiArticle;
-            $article->foto_article = $req->foto_article;
+            $article->foto_article = $imgArticlePath;
             $update = $article->update();
-
             if($update) {
                 return response()->json(['response' => 'Article Sukses Terupdate'], 200);
             } else {
@@ -91,22 +93,26 @@ class ArticleController extends Controller
             }
         } catch(Exception $e) {
             echo $e->getMessage();
+            return response()->json(['error' => $e], 500);
         }
     }
 
-    public function destroy(Request $req, $id) {
+    public function destroy($id) {
         try {
-            if($req->foto_article) {
-                Storage::delete($req->foto_article);
-            }
+            // if($req->foto_article) {
+            //     Storage::delete($req->foto_article);
+            // }
             $article = Article::find($id);
+            $split = explode('/',$article->foto_article,2);
+            $filename = $split[1];
+            Storage::delete($filename);
             $delete = $article->delete();
 
             if($delete) {
                 // Notification Delete
                 return response()->json([
                     'response' => 'Article Sukses Terhapus',
-                    'path' => $req->foto_article
+                    'path' => $article->foto_article
                 ], 200);
             } else {
                 return response()->json(['error' => 'Article Gagal Terhapus'], 500);

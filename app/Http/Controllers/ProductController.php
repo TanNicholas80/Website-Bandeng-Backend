@@ -27,12 +27,11 @@ class ProductController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-
+            $validator = $req->all();
             if($req->file('foto_produk')) {
                 $imgProdukPath = $req->file('foto_produk')->store('produk-images');
-                if($imgProdukPath) {
-                    echo 'Penyimpanan Gambar Produk sudah benar';
-                }
+                $validator['foto_produk'] = $imgProdukPath;
+                $imgProdukPath = "storage/" . $imgProdukPath;
             }
 
             // mencari id mitra
@@ -43,7 +42,7 @@ class ProductController extends Controller
             // Create Product
             $product = new Product();
             $product->nmProduk = $req->input('nmProduk');
-            $product->foto_produk = $req->input('foto_produk');
+            $product->foto_produk = $imgProdukPath;
             $product->hrgProduk = $req->input('hrgProduk');
             $product->stok = $req->input('stok');
             $product->beratProduk = $req->input('beratProduk');
@@ -81,15 +80,11 @@ class ProductController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-
+            $validator = $req->all();
             if($req->file('foto_produk')) {
-                if($req->oldImage) {
-                    Storage::delete($req->oldImage);
-                }
                 $imgProdukPath = $req->file('foto_produk')->store('produk-images');
-                if($imgProdukPath) {
-                    echo 'Update Gambar Produk sudah benar';
-                }
+                $validator['foto_produk'] = $imgProdukPath;
+                $imgProdukPath = "storage/" . $imgProdukPath;
             }
 
             // mencari id mitra
@@ -102,8 +97,12 @@ class ProductController extends Controller
             if(!$product) {
                 echo "Produk Tidak Ditemukan";
             }
+            $split = explode('/',$product->foto_produk,2);
+            $filename = $split[1];
+            Storage::delete($filename);
+
             $product->nmProduk = $req->nmProduk;
-            $product->foto_produk = $req->foto_produk;
+            $product->foto_produk = $imgProdukPath;
             $product->hrgProduk = $req->hrgProduk;
             $product->stok = $req->stok;
             $product->beratProduk = $req->beratProduk;
@@ -120,10 +119,7 @@ class ProductController extends Controller
         }
     }
 
-    public function deleteProduct(Request $req, $mitraId, $productId) {
-        if($req->foto_produk) {
-            Storage::delete($req->foto_produk);
-        }
+    public function deleteProduct($mitraId, $productId) {
         // mencari id mitra
         $mitra = Mitra::find($mitraId);
         if(!$mitra) {
@@ -134,7 +130,9 @@ class ProductController extends Controller
         if(!$product) {
             echo "Produk Tidak Ditemukan";
         }
-
+        $split = explode('/',$product->foto_produk,2);
+        $filename = $split[1];
+        Storage::delete($filename);
         $delete = $product->delete();
         if(!$delete) {
             echo "Produk Gagal Dihapus";

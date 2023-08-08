@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             // FOREIGN KEY to Mitra
-            $table->unsignedBigInteger('mitra_id');
+            $table->uuid('mitra_id');
             $table->foreign('mitra_id')->references('id')->on('mitras');
             $table->string('nmProduk');
             $table->integer('hrgProduk');

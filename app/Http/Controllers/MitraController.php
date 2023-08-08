@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\forgotPass;
 use App\Mail\MitraVerification;
 use Illuminate\Http\Request;
 use App\Models\Mitra;
@@ -35,11 +36,11 @@ class MitraController extends Controller
             'email' => $req->email,
             'password' => Hash::make($req->password),
         ]);
-        if(!$mitra) {
-            return response()->json(['error' => 'Akun Mitra Gagal Terbuat'], 500);
-        } else {
-            return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
-        }
+        // if(!$mitra) {
+        //     return response()->json(['error' => 'Akun Mitra Gagal Terbuat'], 500);
+        // } else {
+        //     return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
+        // }
         try {
             Mail::to($mitra)->send(new MitraVerification($mitra));
             echo 'suk';
@@ -59,15 +60,29 @@ class MitraController extends Controller
         if(!$mitra->hasVerifiedEmail()) {
             return response()->json(['error' => 'Email Anda Belum Terverifikasi'], 403);
         }
-        return response()->json($mitra, 200);
+        $success['token'] = $mitra->createToken('auth_token')->plainTextToken;
+        return response()->json(['response' => 'Berhasil Login', 'token' => $success], 200);
     }
     public function forgotPassword(Request $req) {
         try {
+            $validator = Validator::make($req->all(), [
+                'email' => 'required|email',
+                'password' => 'required|min:8',
+                'confirm_password' => 'required|min:8|same:password'
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 401,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
             $mitra = Mitra::where('email', $req->email)->first();
             if($mitra->email != null) {
-                $input = $req->only(['password']);
+                $input = $req->only(['password', 'confirm_password']);
                 $mitra->password = Hash::make($input['password']);
                 $mitra->save();
+                return response()->json(['response' => 'Sukses Ganti Password'], 200);
             } else {
                 return response()->json(['error' => 'Maaf, Email Tidak Ditemukan'], 404);
             }
@@ -79,6 +94,27 @@ class MitraController extends Controller
             // ], 422);
         }
     }
+
+    public function reqPasswordBaru(Request $req) {
+        $validator = Validator::make($req->all(), [
+            'email' => 'required|email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 401,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $mitra = Mitra::where('email', $req->email)->first();
+            if($mitra->email != null) {
+                Mail::to($mitra)->send(new forgotPass($mitra));
+                echo $mitra->email;
+            } else {
+                return response()->json(['error' => 'Maaf, Email Tidak Ditemukan'], 404);
+            }
+    }
+
     public function editProfile(Request $req, $id) {
         try {
             $validator = Validator::make($req->all(), [
@@ -91,33 +127,35 @@ class MitraController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-    
+            $validator = $req->all();
             if($req->file('foto_mitra')) {
-                if($req->oldImage) {
-                    Storage::delete($req->oldImage);
-                }
                 $imgMitraPath = $req->file('foto_mitra')->store('mitra-images');
-                if($imgMitraPath) {
-                    echo 'Penyimpanan Gambar Mitra sudah benar';
-                }
+                $validator['foto_mitra'] = $imgMitraPath;
+                $imgMitraPath = "storage/" . $imgMitraPath;
             }
     
             $mitra = Mitra::find($id);
+            if($mitra->foto_mitra != null) {
+                $split = explode('/',$mitra->foto_mitra,2);
+                $filename = $split[1];
+                Storage::delete($filename);
+            }
+
             $mitra->namaLengkap = $req->namaLengkap;
             $mitra->tglLahir = $req->tglLahir;
             $mitra->jeniskel = $req->jeniskel;
-            $mitra->foto_mitra = $req->foto_mitra;
+            $mitra->foto_mitra = $imgMitraPath;
             $mitra->no_tlp = $req->no_tlp;
     
             $update = $mitra->update();
 
             if($update) {
-                return response()->json(['response' => 'Profil Mitra Sukses Terupdate'], 200);
+                return response()->json(['response' => 'Profil Mitra Sukses Terupdate', 'user' => $req->user()], 200);
             } else {
                 return response()->json(['error' => 'Profil Mitra Gagal Terupdate'], 403);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            echo $e;
         }
     }
 
@@ -132,6 +170,22 @@ class MitraController extends Controller
             } 
         } catch(Exception $e) {
             echo $e->getMessage();
+        }
+    }
+
+    public function show(Request $request)
+    {
+        // Menggunakan Sanctum, pengguna autentikasi bisa diakses melalui $request->user()
+        try {
+            $mitra = $request->user();
+
+            if (!$mitra) {
+                return response()->json(['message' => 'Mitra tidak ditemukan'], 404);
+            }
+
+            return response()->json(['mitra' => $mitra], 200);
+        } catch(Exception $e) {
+            return response()->json(['message' => $e], 500);
         }
     }
 }
