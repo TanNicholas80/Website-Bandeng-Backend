@@ -59,6 +59,11 @@ class ArticleController extends Controller
         }
     }
 
+    public function getAllArticle() {
+        $article = Article::all();
+        return response()->json(['data' => $article]);
+    }
+
     public function update(Request $req, $id) {
         try {
             $validator = Validator::make($req->all(), [

@@ -7,7 +7,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,6 +27,7 @@ Route::group(['prefix' => 'v1'], function() {
     Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
     Route::middleware(['auth:sanctum'])->post('mitra/edit/{id}', [MitraController::class, 'editProfile']);
     Route::middleware(['auth:sanctum'])->get('mitra/read/{id}', [MitraController::class, 'getMitra']);
+    Route::middleware(['auth:sanctum'])->post('mitra/edit-foto/{id}', [MitraController::class, 'editFotoMitra']);
 });
 Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
@@ -37,6 +37,7 @@ Route::post('login/reset-password', [MitraController::class, 'forgotPassword']);
 
 Route::middleware(['auth:sanctum'])->post('article', [ArticleController::class, 'store']);
 Route::get('article/read/{id}', [ArticleController::class, 'getArticle']);
+Route::get('article/read-all', [ArticleController::class, 'getAllArticle']);
 Route::middleware(['auth:sanctum'])->post('article/edit/{id}', [ArticleController::class, 'update']);
 Route::middleware(['auth:sanctum'])->delete('article/delete/{id}', [ArticleController::class, 'destroy']);
 
