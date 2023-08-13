@@ -20,10 +20,12 @@ class MitraVerification extends Mailable
      * @return void
      */
     public $mitra;
+    public $password;
 
-    public function __construct($mitra)
+    public function __construct($mitra, $password)
     {
         $this->mitra = $mitra;
+        $this->password = $password;
     }
 
     /** 
@@ -34,7 +36,7 @@ class MitraVerification extends Mailable
 
     public function build() {
         return $this->from('dbandengkrobokan@gmail.com', 'DBandeng')
-                    ->subject('Verifikasi Email')
+                    ->subject('Verifikasi Email & Generate Password')
                     ->view('mails.name');
     }
 

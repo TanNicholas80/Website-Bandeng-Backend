@@ -69,6 +69,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Mitra::class,
         ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
     ],
 
     /*

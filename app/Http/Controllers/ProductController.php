@@ -140,4 +140,15 @@ class ProductController extends Controller
             echo "Produk Berhasil Dihapus";
         }
     }
+
+    public function getProductHomepage(Request $req) {
+        $mitraId = [$req->mitra1, $req->mitra2];
+        $mitra = Mitra::query()->select('id', 'foto_mitra')->with(['products:id,mitra_id,nmProduk,foto_produk,hrgProduk'])->find($mitraId);
+        return response()->json(['data' => $mitra], 200);
+    }
+
+    public function spesificProduct($productId) {
+        $product = Product::select('id', 'mitra_id', 'nmProduk', 'hrgProduk', 'foto_produk', 'dskProduk')->find($productId);
+        return response()->json(['data' => $product], 200);
+    }
 }

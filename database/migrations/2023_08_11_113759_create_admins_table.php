@@ -13,20 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mitras', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('namaLengkap')->nullable();
-            $table->string('namaMitra');
-            $table->string('alamatMitra');
-            $table->date('tglLahir')->nullable();
-            $table->string('jeniskel')->nullable();
-            $table->string('no_tlp');
-            $table->string('foto_mitra')->nullable();
+            $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('resetPassToken')->nullable();
             $table->rememberToken();
+            $table->timestamps();
         });
     }
 
@@ -37,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mitra');
+        Schema::dropIfExists('admins');
     }
 };

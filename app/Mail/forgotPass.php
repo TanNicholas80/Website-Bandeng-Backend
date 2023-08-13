@@ -19,10 +19,12 @@ class forgotPass extends Mailable
      * @return void
      */
     public $mitra;
+    public $reqPassToken;
 
-    public function __construct($mitra)
+    public function __construct($mitra, $reqPassToken)
     {
         $this->mitra = $mitra;
+        $this->reqPassToken = $reqPassToken;
     }
 
 

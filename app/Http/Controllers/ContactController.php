@@ -22,9 +22,9 @@ class ContactController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'status' => 401,
+                'status' => 400,
                 'errors' => $validator->errors(),
-            ], 422);
+            ], 400);
         }
         $contact = Contact::create([
             'nameCn' => $req->nameCn,
@@ -32,11 +32,11 @@ class ContactController extends Controller
             'pesanCn' => $req->pesanCn,
             'kategoriCn' => $req->kategoriCn,
         ]);
-        if($contact) {
-            return response()->json(['response' => 'Sukses Mengirim Pesan'], 200);
-        } else {
-            return response()->json(['error' => 'Gagal Mengirim Pesan'], 500);
-        }
+        // if($contact) {
+        //     return response()->json(['response' => 'Sukses Mengirim Pesan'], 200);
+        // } else {
+        //     return response()->json(['error' => 'Gagal Mengirim Pesan'], 500);
+        // }
         try {
             if($contact->kategoriCn === 'mitra') {
                 Mail::to($contact->emailCn)->send(new ContactKategori($contact));
@@ -50,7 +50,7 @@ class ContactController extends Controller
                 $emailAdmin = 'dbandengkrobokan@gmail.com';
                 Mail::to($emailAdmin)->send(new UserMitraToAdmin($contact));
             }
-            echo 'suk';
+            echo 'sukses kirim pesan';
         } catch (Exception $e) {
             echo $e->getMessage();
         }

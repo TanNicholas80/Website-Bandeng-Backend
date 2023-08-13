@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VerificationController;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -21,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-Route::middleware(['auth:sanctum'])->get('/mitra', [MitraController::class, 'show']);
 Route::group(['prefix' => 'v1'], function() {
     Route::post('register', [MitraController::class, 'register']);
     Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
@@ -33,8 +34,11 @@ Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
 Route::post('login/forgot-password', [MitraController::class, 'reqPasswordBaru']);
 Route::post('login/reset-password', [MitraController::class, 'forgotPassword']);
+Route::middleware(['auth:sanctum'])->post('logout-mitra', [MitraController::class, 'mitraLogout']);
 });
-
+Route::get('mitra/all', [MitraController::class, 'getAllMitra']);
+Route::get('mitra/all/product/{id}', [MitraController::class, 'getTest']);
+Route::get('produk/desc-produk/{productId}', [ProductController::class, 'spesificProduct']);
 Route::middleware(['auth:sanctum'])->post('article', [ArticleController::class, 'store']);
 Route::get('article/read/{id}', [ArticleController::class, 'getArticle']);
 Route::get('article/read-all', [ArticleController::class, 'getAllArticle']);
@@ -43,7 +47,13 @@ Route::middleware(['auth:sanctum'])->delete('article/delete/{id}', [ArticleContr
 
 Route::middleware(['auth:sanctum'])->post('product/{mitraId}', [ProductController::class, 'createProduct']);
 Route::get('product/read/{mitraId}', [ProductController::class, 'getProductsByMitra']);
+Route::get('product/homepage', [ProductController::class, 'getProductHomepage']);
 route::middleware(['auth:sanctum'])->post('product/edit/{mitraId}/{productId}', [ProductController::class, 'updateProduct']);
 route::middleware(['auth:sanctum'])->delete('product/delete/{mitraId}/{productId}', [ProductController::class, 'deleteProduct']);
 
 Route::post('contact/kirim', [ContactController::class, 'kirimPesan']);
+
+Route::group(['prefix' => 'admin'], function() {
+    Route::post('login', [AdminController::class, 'loginAdmin']);
+    Route::middleware(['auth:sanctum'])->post('logout-admin', [AdminController::class, 'adminLogout']);
+});
