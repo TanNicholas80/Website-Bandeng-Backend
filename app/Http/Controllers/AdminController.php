@@ -22,7 +22,7 @@ class AdminController extends Controller
     }
 
     public function adminLogout(Request $req) {
-        $req->admin()->currentAccessToken()->delete();
+        $req->user()->currentAccessToken()->delete();
         return response()->json(['msg' => "Anda Berhasil Logout"], 200);
     }
 }

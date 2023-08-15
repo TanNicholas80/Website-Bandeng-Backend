@@ -36,7 +36,7 @@ class ArticleController extends Controller
                 'foto_article' => $imgArticlePath
             ]);
             if($article) {
-                return response()->json(['response' => 'Article Berhasil Terbuat'], 200);
+                return response()->json(['response' => $article], 200);
             } else {
                 return response()->json(['error' => 'Article Gagal Terbuat'], 500);
             }
@@ -64,10 +64,15 @@ class ArticleController extends Controller
         return response()->json(['data' => $article]);
     }
 
+    public function getAllArticleAdmin() {
+        $article = Article::all();
+        return response()->json(['data' => $article]);
+    }
+
     public function update(Request $req, $id) {
         try {
             $validator = Validator::make($req->all(), [
-                'foto_article' => 'required|image|file|max:5024'
+                'foto_article' => 'max:5024'
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -89,10 +94,12 @@ class ArticleController extends Controller
 
             $article->jdlArticle = $req->jdlArticle;
             $article->isiArticle = $req->isiArticle;
-            $article->foto_article = $imgArticlePath;
+            if($req->file('foto_article')) {
+                $article->foto_article = $imgArticlePath;
+            }
             $update = $article->update();
             if($update) {
-                return response()->json(['response' => 'Article Sukses Terupdate'], 200);
+                return response()->json(['response' => $article], 200);
             } else {
                 return response()->json(['error' => 'Article Gagal Terupdate'], 500);
             }

@@ -23,9 +23,9 @@ class ProductController extends Controller
             ]);
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => 401,
+                    'status' => 400,
                     'errors' => $validator->errors(),
-                ], 422);
+                ], 400);
             }
             $validator = $req->all();
             if($req->file('foto_produk')) {
@@ -48,7 +48,10 @@ class ProductController extends Controller
             $product->beratProduk = $req->input('beratProduk');
             $product->dskProduk = $req->input('dskProduk');
     
-            $mitra->products()->save($product);
+            $createProduct = $mitra->products()->save($product);
+            if($createProduct) {
+                return response()->json(['data' => "$createProduct"], 200);
+            }
         } catch(Exception $e) {
             echo $e->getMessage();
         }
@@ -68,10 +71,24 @@ class ProductController extends Controller
         }
     }
 
-    public function updateProduct(Request $req, $mitraId, $productId) {
+    public function getProductsForMitra($mitraId) {
+        try {
+            $mitra = Mitra::with('products')->find($mitraId);
+
+            if (!$mitra) {
+                echo "Mitra Tidak Ditemukan";
+            } else {
+                echo $mitra;
+            }  
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    public function updateProduct(Request $req, $productId) {
         try {
             $validator = Validator::make($req->all(), [
-                'foto_produk' => 'image|file|max:5024',
+                'foto_produk' => 'max:5024',
                 'dskProduk' => 'max:255'
             ]);
             if ($validator->fails()) {
@@ -87,13 +104,8 @@ class ProductController extends Controller
                 $imgProdukPath = "storage/" . $imgProdukPath;
             }
 
-            // mencari id mitra
-            $mitra = Mitra::find($mitraId);
-            if(!$mitra) {
-                echo "Mitra Tidak Ditemukan";
-            }
             // mencari id product berdasarkan id yang dimiliki mitra
-            $product = $mitra->products()->find($productId);
+            $product = Product::find($productId);
             if(!$product) {
                 echo "Produk Tidak Ditemukan";
             }
@@ -102,31 +114,26 @@ class ProductController extends Controller
             Storage::delete($filename);
 
             $product->nmProduk = $req->nmProduk;
-            $product->foto_produk = $imgProdukPath;
+            if($req->file('foto_produk')) {
+                $product->foto_produk = $imgProdukPath;
+            }
             $product->hrgProduk = $req->hrgProduk;
             $product->stok = $req->stok;
             $product->beratProduk = $req->beratProduk;
             $product->dskProduk = $req->dskProduk;
 
-            $update = $product->update();
-            if(!$update) {
-                echo "Produk Gagal Diupdate";
-            } else {
-                echo "Produk Berhasil Terupdate";
-            }         
+            $update = $product->save();
+            if($update) {
+                return response()->json(['data' => "$product"], 200);
+            }  
         } catch(Exception $e) {
             echo $e->getMessage();
         }
     }
 
-    public function deleteProduct($mitraId, $productId) {
-        // mencari id mitra
-        $mitra = Mitra::find($mitraId);
-        if(!$mitra) {
-            echo "Mitra Tidak Ditemukan";
-        }
+    public function deleteProduct($productId) {
         // mencari id product berdasarkan id yang dimiliki mitra
-        $product = $mitra->products()->find($productId);
+        $product = Product::find($productId);
         if(!$product) {
             echo "Produk Tidak Ditemukan";
         }

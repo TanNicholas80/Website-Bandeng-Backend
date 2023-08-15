@@ -19,10 +19,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-// Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+// Mitra Endpoint Start
 Route::group(['prefix' => 'v1'], function() {
     Route::post('register', [MitraController::class, 'register']);
     Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
@@ -34,26 +31,38 @@ Route::group(['prefix' => 'v2'], function() {
 Route::post('login', [MitraController::class, 'login']);
 Route::post('login/forgot-password', [MitraController::class, 'reqPasswordBaru']);
 Route::post('login/reset-password', [MitraController::class, 'forgotPassword']);
-Route::middleware(['auth:sanctum'])->post('logout-mitra', [MitraController::class, 'mitraLogout']);
+Route::middleware(['auth:sanctum'])->get('logout-mitra', [MitraController::class, 'mitraLogout']);
 });
 Route::get('mitra/all', [MitraController::class, 'getAllMitra']);
+Route::middleware(['auth:sanctum'])->get('mitra/all/admin', [MitraController::class, 'getAllMitraAdmin']);
+Route::middleware(['auth:sanctum'])->post('create/mitra', [MitraController::class, 'createMitra']);
+Route::middleware(['auth:sanctum'])->post('edit/mitra/{id}', [MitraController::class, 'editMitra']);
+Route::middleware(['auth:sanctum'])->delete('delete/mitra/{id}', [MitraController::class, 'deleteMitra']);
 Route::get('mitra/all/product/{id}', [MitraController::class, 'getTest']);
-Route::get('produk/desc-produk/{productId}', [ProductController::class, 'spesificProduct']);
+// Mitra Endpoint End
+// Article Endpoint Start
 Route::middleware(['auth:sanctum'])->post('article', [ArticleController::class, 'store']);
 Route::get('article/read/{id}', [ArticleController::class, 'getArticle']);
 Route::get('article/read-all', [ArticleController::class, 'getAllArticle']);
+Route::middleware(['auth:sanctum'])->get('article/read-all/admin', [ArticleController::class, 'getAllArticleAdmin']);
 Route::middleware(['auth:sanctum'])->post('article/edit/{id}', [ArticleController::class, 'update']);
 Route::middleware(['auth:sanctum'])->delete('article/delete/{id}', [ArticleController::class, 'destroy']);
-
+// Article Endpoint End
+// Product Endpoint Start
 Route::middleware(['auth:sanctum'])->post('product/{mitraId}', [ProductController::class, 'createProduct']);
 Route::get('product/read/{mitraId}', [ProductController::class, 'getProductsByMitra']);
+Route::middleware(['auth:sanctum'])->get('product/read-mitra/{mitraId}', [ProductController::class, 'getProductsForMitra']);
 Route::get('product/homepage', [ProductController::class, 'getProductHomepage']);
-route::middleware(['auth:sanctum'])->post('product/edit/{mitraId}/{productId}', [ProductController::class, 'updateProduct']);
-route::middleware(['auth:sanctum'])->delete('product/delete/{mitraId}/{productId}', [ProductController::class, 'deleteProduct']);
-
+Route::get('produk/desc-produk/{productId}', [ProductController::class, 'spesificProduct']);
+route::middleware(['auth:sanctum'])->post('product/edit/{productId}', [ProductController::class, 'updateProduct']);
+route::middleware(['auth:sanctum'])->delete('product/delete/{productId}', [ProductController::class, 'deleteProduct']);
+// Product Endpoint End
+// Contact Endpoint Start
 Route::post('contact/kirim', [ContactController::class, 'kirimPesan']);
-
+// Contact Endpint End
+// Admin Endpoint Start
 Route::group(['prefix' => 'admin'], function() {
     Route::post('login', [AdminController::class, 'loginAdmin']);
-    Route::middleware(['auth:sanctum'])->post('logout-admin', [AdminController::class, 'adminLogout']);
+    Route::middleware(['auth:sanctum'])->get('logout-admin', [AdminController::class, 'adminLogout']);
 });
+// Admin Endpoint End

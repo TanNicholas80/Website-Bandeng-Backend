@@ -186,6 +186,11 @@ class MitraController extends Controller
         return response()->json(['data' => $mitra]);
     }
 
+    public function getAllMitraAdmin() {
+        $mitra = Mitra::all();
+        return response()->json(['data' => $mitra]);
+    }
+
     public function getTest($id) {
         $mitra = Mitra::select('namaMitra', 'foto_mitra')->where('id', $id)->get();
         return response()->json(['data' => $mitra]);
@@ -230,7 +235,73 @@ class MitraController extends Controller
     }
 
     public function mitraLogout(Request $req) {
-        $req->mitra()->currentAccessToken()->delete();
+        $req->user()->currentAccessToken()->delete();
         return response()->json(['msg' => "Anda Berhasil Logout"], 200);
+    }
+
+    public function createMitra(Request $req) {
+        $validator = Validator::make($req->all(), [
+            'namaMitra' => 'required',
+            'alamatMitra' => 'required',
+            'no_tlp' => 'required',
+            'email' => 'required|email|unique:mitras',
+            'password' => 'min:8'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $password = Str::random(12);
+        $mitra = Mitra::create([
+            'namaMitra' => $req->namaMitra,
+            'alamatMitra' => $req->alamatMitra,
+            'no_tlp' => $req->no_tlp,
+            'email' => $req->email,
+            'password' => Hash::make($password),
+        ]);
+        try {
+            echo $mitra;
+            Mail::to($mitra)->send(new MitraVerification($mitra, $password));
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    public function editMitra(Request $req, $id) {
+        $validator = Validator::make($req->all(), [
+            'email' => 'email',
+            'password' => 'min:8'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $mitra = Mitra::find($id);
+        $mitra->namaMitra = $req->namaMitra; 
+        $mitra->alamatMitra = $req->alamatMitra; 
+        $mitra->no_tlp = $req->no_tlp; 
+        $mitra->email = $req->email; 
+        $mitra->password = Hash::make($req->password);
+        
+        $update = $mitra->update();
+        if($update) {
+            return response()->json(['response' => $mitra], 200);
+        } else {
+            return response()->json(['error' => 'Mitra Gagal Terupdate'], 500);
+        }
+    }
+
+    public function deleteMitra($id) {
+        $mitra = Mitra::find($id);
+        $delete = $mitra->delete();
+        if($delete) {
+            return response()->json(['response' => 'Mitra Sukses Terhapus'], 200);
+        } else {
+            return response()->json(['error' => 'Mitra Gagal Terhapus'], 500);
+        }
     }
 }
