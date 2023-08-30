@@ -5,8 +5,10 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationController;
 use App\Models\Admin;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -44,6 +46,7 @@ Route::get('mitra/all/product/{id}', [MitraController::class, 'getTest']);
 Route::middleware(['auth:sanctum'])->post('article', [ArticleController::class, 'store']);
 Route::get('article/read/{id}', [ArticleController::class, 'getArticle']);
 Route::get('article/read-all', [ArticleController::class, 'getAllArticle']);
+Route::get('article/home/news-article', [ArticleController::class, 'getNewsArticle']);
 Route::middleware(['auth:sanctum'])->get('article/read-all/admin', [ArticleController::class, 'getAllArticleAdmin']);
 Route::middleware(['auth:sanctum'])->post('article/edit/{id}', [ArticleController::class, 'update']);
 Route::middleware(['auth:sanctum'])->delete('article/delete/{id}', [ArticleController::class, 'destroy']);
@@ -66,3 +69,8 @@ Route::group(['prefix' => 'admin'], function() {
     Route::middleware(['auth:sanctum'])->get('logout-admin', [AdminController::class, 'adminLogout']);
 });
 // Admin Endpoint End
+// User Endpoint Start
+Route::post('register/user', [UserController::class, 'registerUser']);
+Route::post('login/user', [UserController::class, 'loginUser']);
+Route::post('edit/user/{id}', [UserController::class, 'editUser']);
+// User Endpoint End

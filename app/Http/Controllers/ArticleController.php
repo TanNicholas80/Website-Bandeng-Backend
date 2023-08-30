@@ -133,4 +133,9 @@ class ArticleController extends Controller
             echo $e->getMessage();
         }
     }
+
+    public function getNewsArticle() {
+        $article = Article::orderBy('created_at', 'desc')->limit(6)->get();
+        return response()->json(['data' => $article]);
+    }
 }

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('foto_produk')->nullable();
             $table->string('beratProduk');
             $table->string('dskProduk');
+            $table->string('link');
             $table->timestamps();
         });
     }
