@@ -192,7 +192,7 @@ class MitraController extends Controller
     }
 
     public function getTest($id) {
-        $mitra = Mitra::select('namaMitra', 'foto_mitra')->where('id', $id)->get();
+        $mitra = Mitra::select('namaMitra', 'foto_mitra', 'alamatMitra', 'no_tlp')->where('id', $id)->get();
         return response()->json(['data' => $mitra]);
     }
 

@@ -68,7 +68,7 @@ class ProductController extends Controller
             if (!$mitra) {
                 echo "Mitra Tidak Ditemukan";
             } else {
-                echo $mitra;
+                return response()->json(['data' => "$mitra"], 200);
             }
         } catch (Exception $e) {
             echo $e->getMessage();
@@ -178,7 +178,7 @@ class ProductController extends Controller
 
     public function spesificProduct($productId)
     {
-        $product = Product::select('id', 'mitra_id', 'nmProduk', 'hrgProduk', 'foto_produk', 'dskProduk', 'link')->find($productId);
+        $product = Product::all()->find($productId);
         return response()->json(['data' => $product], 200);
     }
 }
