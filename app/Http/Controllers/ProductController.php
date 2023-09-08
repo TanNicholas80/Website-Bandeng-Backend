@@ -31,9 +31,11 @@ class ProductController extends Controller
             }
             $validator = $req->all();
             if ($req->file('foto_produk')) {
-                $imgProdukPath = $req->file('foto_produk')->store('produk-images');
-                $validator['foto_produk'] = $imgProdukPath;
-                $imgProdukPath = "storage/" . $imgProdukPath;
+                // $imgProdukPath = $req->file('foto_produk')->store('produk-images');
+                // $validator['foto_produk'] = $imgProdukPath;
+                // $imgProdukPath = "storage/" . $imgProdukPath;
+                $validator['foto_produk'] = $req->file('foto_produk');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_produk')->getRealPath())->getSecurePath();
             }
 
             // mencari id mitra
@@ -44,7 +46,7 @@ class ProductController extends Controller
             // Create Product
             $product = new Product();
             $product->nmProduk = $req->input('nmProduk');
-            $product->foto_produk = $imgProdukPath;
+            $product->foto_produk = $uploadedFileUrl;
             $product->hrgProduk = $req->input('hrgProduk');
             $product->stok = $req->input('stok');
             $product->beratProduk = $req->input('beratProduk');
@@ -105,9 +107,11 @@ class ProductController extends Controller
             }
             $validator = $req->all();
             if ($req->file('foto_produk')) {
-                $imgProdukPath = $req->file('foto_produk')->store('produk-images');
-                $validator['foto_produk'] = $imgProdukPath;
-                $imgProdukPath = "storage/" . $imgProdukPath;
+                // $imgProdukPath = $req->file('foto_produk')->store('produk-images');
+                // $validator['foto_produk'] = $imgProdukPath;
+                // $imgProdukPath = "storage/" . $imgProdukPath;
+                $validator['foto_produk'] = $req->file('foto_produk');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_produk')->getRealPath())->getSecurePath();
             }
 
             // mencari id product berdasarkan id yang dimiliki mitra
@@ -115,13 +119,13 @@ class ProductController extends Controller
             if (!$product) {
                 echo "Produk Tidak Ditemukan";
             }
-            $split = explode('/', $product->foto_produk, 2);
-            $filename = $split[1];
-            Storage::delete($filename);
+            // $split = explode('/', $product->foto_produk, 2);
+            // $filename = $split[1];
+            // Storage::delete($filename);
 
             $product->nmProduk = $req->nmProduk;
             if ($req->file('foto_produk')) {
-                $product->foto_produk = $imgProdukPath;
+                $product->foto_produk = $uploadedFileUrl;
             }
             $product->hrgProduk = $req->hrgProduk;
             $product->stok = $req->stok;
@@ -145,9 +149,9 @@ class ProductController extends Controller
         if (!$product) {
             echo "Produk Tidak Ditemukan";
         }
-        $split = explode('/', $product->foto_produk, 2);
-        $filename = $split[1];
-        Storage::delete($filename);
+        // $split = explode('/', $product->foto_produk, 2);
+        // $filename = $split[1];
+        // Storage::delete($filename);
         $delete = $product->delete();
         if (!$delete) {
             echo "Produk Gagal Dihapus";

@@ -125,7 +125,7 @@ class MitraController extends Controller
     public function editProfile(Request $req, $id) {
         try {
             $validator = Validator::make($req->all(), [
-                // 'foto_mitra' => 'image|file|max:5024',
+                // 'foto_mitra' => 'max:5024',
                 'tglLahir' => 'date'
             ]);
             if ($validator->fails()) {
@@ -209,18 +209,20 @@ class MitraController extends Controller
             }
             $validator = $req->all();
             if($req->file('foto_mitra')) {
-                $imgMitraPath = $req->file('foto_mitra')->store('mitra-images');
-                $validator['foto_mitra'] = $imgMitraPath;
-                $imgMitraPath = "storage/" . $imgMitraPath;
+                // $imgMitraPath = $req->file('foto_mitra')->store('mitra-images');
+                // $validator['foto_mitra'] = $imgMitraPath;
+                // $imgMitraPath = "storage/" . $imgMitraPath;
+                $validator['foto_mitra'] = $req->file('foto_mitra');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_mitra')->getRealPath())->getSecurePath();
             }
             $mitra = Mitra::find($id);
-            if($mitra->foto_mitra != null) {
-                $split = explode('/',$mitra->foto_mitra,2);
-                $filename = $split[1];
-                Storage::delete($filename);
-            }
+            // if($mitra->foto_mitra != null) {
+            //     $split = explode('/',$mitra->foto_mitra,2);
+            //     $filename = $split[1];
+            //     Storage::delete($filename);
+            // }
     
-            $mitra->foto_mitra = $imgMitraPath;
+            $mitra->foto_mitra = $uploadedFileUrl;
     
             $update = $mitra->update();
     

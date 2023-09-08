@@ -25,15 +25,16 @@ class ArticleController extends Controller
             }
             $validator = $req->all();
             if($req->file('foto_article')) {
-                $imgArticlePath = $req->file('foto_article')->store('article-images');
-                $validator['foto_article'] = $imgArticlePath;
-                $imgArticlePath = "storage/" . $imgArticlePath;
+                // $imgArticlePath = $req->file('foto_article')->store('article-images');
+                $validator['foto_article'] = $req->file('foto_article');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_article')->getRealPath())->getSecurePath();
+                // $imgArticlePath = "storage/" . $imgArticlePath;
             }
     
             $article = Article::create([
                 'jdlArticle' => $req->jdlArticle,
                 'isiArticle' => $req->isiArticle,
-                'foto_article' => $imgArticlePath
+                'foto_article' => $uploadedFileUrl
             ]);
             if($article) {
                 return response()->json(['response' => $article], 200);
@@ -82,20 +83,22 @@ class ArticleController extends Controller
             }
             $validator = $req->all();
             if($req->file('foto_article')) {
-                $imgArticlePath = $req->file('foto_article')->store('article-images');
-                $validator['foto_article'] = $imgArticlePath;
-                $imgArticlePath = "storage/" . $imgArticlePath;
+                // $imgArticlePath = $req->file('foto_article')->store('article-images');
+                // $validator['foto_article'] = $imgArticlePath;
+                // $imgArticlePath = "storage/" . $imgArticlePath;
+                $validator['foto_article'] = $req->file('foto_article');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_article')->getRealPath())->getSecurePath();
             }
 
             $article = Article::find($id);
-            $split = explode('/',$article->foto_article,2);
-            $filename = $split[1];
-            Storage::delete($filename);
+            // $split = explode('/',$article->foto_article,2);
+            // $filename = $split[1];
+            // Storage::delete($filename);
 
             $article->jdlArticle = $req->jdlArticle;
             $article->isiArticle = $req->isiArticle;
             if($req->file('foto_article')) {
-                $article->foto_article = $imgArticlePath;
+                $article->foto_article = $uploadedFileUrl;
             }
             $update = $article->update();
             if($update) {
@@ -115,11 +118,11 @@ class ArticleController extends Controller
             //     Storage::delete($req->foto_article);
             // }
             $article = Article::find($id);
-            $split = explode('/',$article->foto_article,2);
-            $filename = $split[1];
-            Storage::delete($filename);
+            // $split = explode('/',$article->foto_article,2);
+            // $filename = $split[1];
+            // Storage::delete($filename);
             $delete = $article->delete();
-
+            
             if($delete) {
                 // Notification Delete
                 return response()->json([
