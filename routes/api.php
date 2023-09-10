@@ -54,7 +54,7 @@ Route::middleware(['auth:sanctum'])->delete('article/delete/{id}', [ArticleContr
 // Product Endpoint Start
 Route::middleware(['auth:sanctum'])->post('product/{mitraId}', [ProductController::class, 'createProduct']);
 Route::get('product/read/{mitraId}', [ProductController::class, 'getProductsByMitra']);
-Route::middleware(['auth:sanctum'])->get('product/read-mitra/{mitraId}', [ProductController::class, 'getProductsForMitra']);
+// Route::middleware(['auth:sanctum'])->get('product/read-mitra/{mitraId}', [ProductController::class, 'getProductsForMitra']);
 Route::get('product/homepage', [ProductController::class, 'getProductHomepage']);
 Route::get('produk/desc-produk/{productId}', [ProductController::class, 'spesificProduct']);
 route::middleware(['auth:sanctum'])->post('product/edit/{productId}', [ProductController::class, 'updateProduct']);
@@ -74,3 +74,8 @@ Route::post('register/user', [UserController::class, 'registerUser']);
 Route::post('login/user', [UserController::class, 'loginUser']);
 Route::post('edit/user/{id}', [UserController::class, 'editUser']);
 // User Endpoint End
+
+Route::middleware(['cors'])->group(function () {
+    // Rute yang memerlukan middleware CORS
+    Route::get('product/read-mitra/{mitraId}', [ProductController::class, 'getProductsForMitra']);
+});
