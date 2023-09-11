@@ -46,7 +46,7 @@ class MitraController extends Controller
         // }
             Mail::to($mitra)->send(new MitraVerification($mitra, $password));
 
-            return response()->json(['response' => 'Mitra Sukses Teregistrasi'], 200);
+            return response()->json(['data' => 'Mitra Sukses Teregistrasi'], 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Gagal Registrasi'], 500);
         }
