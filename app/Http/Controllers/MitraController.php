@@ -112,7 +112,8 @@ class MitraController extends Controller
                 $update = $mitra->update();
                 if($update) {
                     Mail::to($mitra)->send(new forgotPass($mitra, $reqPassToken));
-                    echo $mitra->email;
+
+                    return response()->json(['response' => "$mitra->email"], 200);
                 } else {
                     return response()->json(['error' => 'Request Reset Password Gagal Terkirim'], 400);
                 }
