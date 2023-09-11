@@ -85,7 +85,7 @@ class ProductController extends Controller
             if (!$mitra) {
                 echo "Mitra Tidak Ditemukan";
             } else {
-                return response()->json(['data' => "$mitra"], 200);
+                echo $mitra;
             }
         } catch (Exception $e) {
             echo $e->getMessage();
