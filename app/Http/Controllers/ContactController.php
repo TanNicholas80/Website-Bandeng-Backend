@@ -50,9 +50,9 @@ class ContactController extends Controller
                 $emailAdmin = 'dbandengkrobokan@gmail.com';
                 Mail::to($emailAdmin)->send(new UserMitraToAdmin($contact));
             }
-            echo 'sukses kirim pesan';
+            return response()->json(['response' => 'Berhasil, Cek Email Kamu'], 200);
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Gagal mengirim kontak'], 500);
         }
     }
 }

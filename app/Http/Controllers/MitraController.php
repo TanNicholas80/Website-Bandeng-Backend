@@ -45,6 +45,8 @@ class MitraController extends Controller
         //     return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
         // }
             Mail::to($mitra)->send(new MitraVerification($mitra, $password));
+
+            return response()->json(['response' => 'Mitra Sukses Teregistrasi'], 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Gagal Registrasi'], 500);
         }
@@ -258,10 +260,11 @@ class MitraController extends Controller
             'password' => Hash::make($password),
         ]);
         try {
-            echo $mitra;
             Mail::to($mitra)->send(new MitraVerification($mitra, $password));
+
+            return response()->json(['response' => "$mitra"], 200);
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => "Gagal Buat Mitra"], 500);
         }
     }
 
