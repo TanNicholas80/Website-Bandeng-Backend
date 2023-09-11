@@ -88,7 +88,7 @@ class MitraController extends Controller
                 return response()->json(['response' => 'Sukses Ganti Password'], 200);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Gagal Ganti Password'], 500);
             // return response($e)->json([
             //     'status' => 401,
             //     'msg' => $e->getMessage()
@@ -159,11 +159,9 @@ class MitraController extends Controller
 
             if($update) {
                 return response()->json(['response' => 'Profil Mitra Sukses Terupdate', 'user' => $req->user()], 200);
-            } else {
-                return response()->json(['error' => 'Profil Mitra Gagal Terupdate'], 403);
-            }
+            } 
         } catch(Exception $e) {
-            echo $e;
+            return response()->json(['error' => 'Profil Mitra Gagal Terupdate'], 500);
         }
     }
 
@@ -171,29 +169,27 @@ class MitraController extends Controller
         try {
             $mitra = Mitra::find($id);
 
-            if (!$mitra) {
-                echo "Mitra Tidak Ditemukan";
-            } else {
+            if ($mitra) {
                 return response()->json(['data' => $mitra], 200);
             } 
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Mitra Tidak Ditemukan'], 500);
         }
     }
     
     public function getAllMitra() {
         $mitra = Mitra::select('id', 'namaMitra', 'foto_mitra')->get();
-        return response()->json(['data' => $mitra]);
+        return response()->json(['data' => $mitra], 200);
     }
 
     public function getAllMitraAdmin() {
         $mitra = Mitra::all();
-        return response()->json(['data' => $mitra]);
+        return response()->json(['data' => $mitra], 200);
     }
 
     public function getTest($id) {
         $mitra = Mitra::select('namaMitra', 'foto_mitra', 'alamatMitra', 'no_tlp')->where('id', $id)->get();
-        return response()->json(['data' => $mitra]);
+        return response()->json(['data' => $mitra], 200);
     }
 
     public function editFotoMitra(Request $req, $id) {
@@ -228,11 +224,9 @@ class MitraController extends Controller
     
             if($update) {
                 return response()->json(['response' => 'Foto Mitra Sukses Terupload', 'user' => $req->user()], 200);
-            } else {
-                return response()->json(['error' => 'Foto Mitra Gagal Terupload'], 403);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Foto Mitra Gagal Terupload'], 500);
         }
     }
 

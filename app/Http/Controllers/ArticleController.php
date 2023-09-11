@@ -38,11 +38,9 @@ class ArticleController extends Controller
             ]);
             if($article) {
                 return response()->json(['response' => $article], 200);
-            } else {
-                return response()->json(['error' => 'Article Gagal Terbuat'], 500);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Article Gagal Terbuat'], 500);
         }
     }
 
@@ -50,24 +48,22 @@ class ArticleController extends Controller
         try {
             $article = Article::find($id);
 
-            if (!$article) {
-                echo "Article Tidak Ditemukan";
-            } else {
-                echo $article;
-            } 
+            if ($article) {
+                return response()->json(['response' => $article], 200);
+            }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Article Tidak Ditemukan'], 500);
         }
     }
 
     public function getAllArticle() {
         $article = Article::all();
-        return response()->json(['data' => $article]);
+        return response()->json(['data' => $article], 200);
     }
 
     public function getAllArticleAdmin() {
         $article = Article::all();
-        return response()->json(['data' => $article]);
+        return response()->json(['data' => $article], 200);
     }
 
     public function update(Request $req, $id) {
@@ -103,12 +99,9 @@ class ArticleController extends Controller
             $update = $article->update();
             if($update) {
                 return response()->json(['response' => $article], 200);
-            } else {
-                return response()->json(['error' => 'Article Gagal Terupdate'], 500);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
-            return response()->json(['error' => $e], 500);
+            return response()->json(['error' => 'Article Gagal Terupdate'], 500);
         }
     }
 
@@ -129,16 +122,14 @@ class ArticleController extends Controller
                     'response' => 'Article Sukses Terhapus',
                     'path' => $article->foto_article
                 ], 200);
-            } else {
-                return response()->json(['error' => 'Article Gagal Terhapus'], 500);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Article Gagal Terhapus'], 500);
         }
     }
 
     public function getNewsArticle() {
         $article = Article::orderBy('created_at', 'desc')->limit(6)->get();
-        return response()->json(['data' => $article]);
+        return response()->json(['data' => $article], 200);
     }
 }

@@ -40,9 +40,6 @@ class ProductController extends Controller
 
             // mencari id mitra
             $mitra = Mitra::find($mitraId);
-            if (!$mitra) {
-                echo "ID Mitra Tidak Ditemukan";
-            }
             // Create Product
             $product = new Product();
             $product->nmProduk = $req->input('nmProduk');
@@ -58,7 +55,7 @@ class ProductController extends Controller
                 return response()->json(['data' => "$createProduct"], 200);
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => "Gagal Membuat Produk"], 500);
         }
     }
 
@@ -67,13 +64,11 @@ class ProductController extends Controller
         try {
             $mitra = Mitra::with('products')->find($mitraId);
 
-            if (!$mitra) {
-                echo "Mitra Tidak Ditemukan";
-            } else {
+            if ($mitra) {
                 return response()->json(['data' => "$mitra"], 200);
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => "Produk Mitra Tidak Ditemukan"], 500);
         }
     }
 
@@ -82,13 +77,11 @@ class ProductController extends Controller
         try {
             $mitra = Mitra::with('products')->find($mitraId);
 
-            if (!$mitra) {
-                echo "Mitra Tidak Ditemukan";
-            } else {
+            if ($mitra) {
                 return response()->json(['data' => "$mitra"], 200);
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => "Produk Mitra Tidak Ditemukan"], 500);
         }
     }
 
@@ -116,9 +109,6 @@ class ProductController extends Controller
 
             // mencari id product berdasarkan id yang dimiliki mitra
             $product = Product::find($productId);
-            if (!$product) {
-                echo "Produk Tidak Ditemukan";
-            }
             // $split = explode('/', $product->foto_produk, 2);
             // $filename = $split[1];
             // Storage::delete($filename);
@@ -138,7 +128,7 @@ class ProductController extends Controller
                 return response()->json(['data' => "$product"], 200);
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => "Produk Gagal Di Update"], 500);
         }
     }
 
@@ -146,17 +136,14 @@ class ProductController extends Controller
     {
         // mencari id product berdasarkan id yang dimiliki mitra
         $product = Product::find($productId);
-        if (!$product) {
-            echo "Produk Tidak Ditemukan";
-        }
         // $split = explode('/', $product->foto_produk, 2);
         // $filename = $split[1];
         // Storage::delete($filename);
         $delete = $product->delete();
         if (!$delete) {
-            echo "Produk Gagal Dihapus";
+            return response()->json(['error' => "Produk Gagal Dihapus"], 500);
         } else {
-            echo "Produk Berhasil Dihapus";
+            return response()->json(['response' => "Produk Berhasil Dihapus"], 200);
         }
     }
 
