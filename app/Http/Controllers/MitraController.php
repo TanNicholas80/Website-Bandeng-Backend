@@ -17,6 +17,7 @@ class MitraController extends Controller
 {
     // Fitur Register untuk Frontend
     public function register(Request $req) {
+        try {
         $validator = Validator::make($req->all(), [
             'namaMitra' => 'required',
             'alamatMitra' => 'required',
@@ -43,11 +44,9 @@ class MitraController extends Controller
         // } else {
         //     return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
         // }
-        try {
             Mail::to($mitra)->send(new MitraVerification($mitra, $password));
-            echo 'suk';
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Gagal Registrasi'], 500);
         }
     }
     // Fitur Login untuk Frontend
