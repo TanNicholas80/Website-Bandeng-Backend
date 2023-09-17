@@ -29,13 +29,11 @@ class UserController extends Controller
                 'email' => $req->email,
                 'password' => Hash::make($req->password),
             ]);
-            if(!$user) {
-                return response()->json(['error' => 'Akun Mitra Gagal Terbuat'], 500);
-            } else {
+            if($user) {
                 return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
-            }
+            } 
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Akun Mitra Gagal Terbuat'], 500);
         }
     }
 
@@ -52,32 +50,27 @@ class UserController extends Controller
             }
             $validator = $req->all();
             if($req->file('foto_user')) {
-                $imgUserPath = $req->file('foto_user')->store('article-user');
-                $validator['foto_user'] = $imgUserPath;
-                $imgUserPath = "storage/" . $imgUserPath;
+                $validator['foto_user'] = $req->file('foto_user');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_user')->getRealPath())->getSecurePath();
             } 
             $user = User::find($id);
             if($user->foto_user != null) {
-                $split = explode('/',$user->foto_user,2);
-                $filename = $split[1];
-                Storage::delete($filename);
+                cloudinary()->destroy($user->foto_user);
             }
     
             $user->name = $req->name;
             $user->alamatUser = $req->alamatUser;
             $user->no_user = $req->no_user;
             $user->email = $req->email;
-            $user->foto_user = $imgUserPath;
+            $user->foto_user = $uploadedFileUrl;
         
             $update = $user->update();
     
             if($update) {
                 return response()->json(['response' => 'Profil User Sukses Terupdate'], 200);
-            } else {
-                return response()->json(['error' => 'Profil User Gagal Terupdate'], 403);
             }
         } catch(Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => 'Profil User Gagal Terupdate'], 500);
         }
     }
 

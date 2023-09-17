@@ -11,7 +11,7 @@
     <div class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 100vh">
         <img src={{ asset('img/check.png') }} alt="email-verified" width="200px" class="mb-3">
         <h3 class="mb-3">{{ $msg }}</h3>
-        <a href="http://localhost:3000" class="btn btn-primary rounded-pill fw-bold" width="140px"><button type="button">Resend Email</button></a>
+        <a href="https://dbandeng.online" class="btn btn-primary rounded-pill fw-bold" width="140px"><button type="button">Resend Email</button></a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>

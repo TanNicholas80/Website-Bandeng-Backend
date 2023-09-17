@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -87,9 +88,13 @@ class ArticleController extends Controller
             }
 
             $article = Article::find($id);
-            // $split = explode('/',$article->foto_article,2);
-            // $filename = $split[1];
-            // Storage::delete($filename);
+            // if($article->foto_article != null) {
+            //     $cloudinaryStorage = new CloudinaryStorage();
+            //     $imageUrl = $article->foto_article;
+            //     $publicId = $cloudinaryStorage->getCloudinaryImageInfo($imageUrl);
+            //     // $imageUrl = $article->foto_article;
+            //     cloudinary()->destroy($publicId);
+            // }
 
             $article->jdlArticle = $req->jdlArticle;
             $article->isiArticle = $req->isiArticle;
@@ -107,24 +112,20 @@ class ArticleController extends Controller
 
     public function destroy($id) {
         try {
-            // if($req->foto_article) {
-            //     Storage::delete($req->foto_article);
-            // }
             $article = Article::find($id);
-            // $split = explode('/',$article->foto_article,2);
-            // $filename = $split[1];
-            // Storage::delete($filename);
+            // $imageUrl = $article->foto_article;
+            // $publicId = $imageUrl->getPublicId();
+            // cloudinary()->destroy($publicId);
             $delete = $article->delete();
             
             if($delete) {
                 // Notification Delete
                 return response()->json([
                     'response' => 'Article Sukses Terhapus',
-                    'path' => $article->foto_article
                 ], 200);
             }
         } catch(Exception $e) {
-            return response()->json(['error' => 'Article Gagal Terhapus'], 500);
+            return response()->json(['error' => 'Article Gagal Terhapus', 'exce' => $e], 500);
         }
     }
 

@@ -214,11 +214,6 @@ class MitraController extends Controller
                 $uploadedFileUrl = cloudinary()->upload($req->file('foto_mitra')->getRealPath())->getSecurePath();
             }
             $mitra = Mitra::find($id);
-            // if($mitra->foto_mitra != null) {
-            //     $split = explode('/',$mitra->foto_mitra,2);
-            //     $filename = $split[1];
-            //     Storage::delete($filename);
-            // }
     
             $mitra->foto_mitra = $uploadedFileUrl;
     
