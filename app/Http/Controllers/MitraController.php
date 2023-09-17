@@ -214,7 +214,12 @@ class MitraController extends Controller
                 $uploadedFileUrl = cloudinary()->upload($req->file('foto_mitra')->getRealPath())->getSecurePath();
             }
             $mitra = Mitra::find($id);
-    
+            if($mitra->foto_mitra != null) {
+                $imageUrl = $mitra->foto_mitra;
+                $publicId = CloudinaryStorage::getPublicId($imageUrl);
+                cloudinary()->destroy($publicId);
+            }
+
             $mitra->foto_mitra = $uploadedFileUrl;
     
             $update = $mitra->update();
@@ -291,6 +296,9 @@ class MitraController extends Controller
 
     public function deleteMitra($id) {
         $mitra = Mitra::find($id);
+        $imageUrl = $mitra->foto_mitra;
+        $publicId = CloudinaryStorage::getPublicId($imageUrl);
+        cloudinary()->destroy($publicId);
         $delete = $mitra->delete();
         if($delete) {
             return response()->json(['response' => 'Mitra Sukses Terhapus'], 200);

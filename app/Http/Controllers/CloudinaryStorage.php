@@ -7,10 +7,9 @@ use Illuminate\Http\Request;
 
 class CloudinaryStorage extends Controller
 {
-    function getCloudinaryImageInfo($imageUrl) {
-        // Ambil public ID dari URL
-        $publicId = Cloudinary::getPublicId($imageUrl);
-    
-        return $publicId;
+    public static function getPublicId($path)
+    {
+        $filename = pathinfo($path, PATHINFO_FILENAME); // Mendapatkan nama file tanpa ekstensi
+        return $filename;
     }
 }

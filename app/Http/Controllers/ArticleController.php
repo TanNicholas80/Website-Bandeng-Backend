@@ -88,13 +88,11 @@ class ArticleController extends Controller
             }
 
             $article = Article::find($id);
-            // if($article->foto_article != null) {
-            //     $cloudinaryStorage = new CloudinaryStorage();
-            //     $imageUrl = $article->foto_article;
-            //     $publicId = $cloudinaryStorage->getCloudinaryImageInfo($imageUrl);
-            //     // $imageUrl = $article->foto_article;
-            //     cloudinary()->destroy($publicId);
-            // }
+            if($article->foto_article != null) {
+                $imageUrl = $article->foto_article;
+                $publicId = CloudinaryStorage::getPublicId($imageUrl);
+                cloudinary()->destroy($publicId);
+            }
 
             $article->jdlArticle = $req->jdlArticle;
             $article->isiArticle = $req->isiArticle;
@@ -103,7 +101,7 @@ class ArticleController extends Controller
             }
             $update = $article->update();
             if($update) {
-                return response()->json(['response' => $article], 200);
+                return response()->json(['response' => $article, 'cloudinaryId' => $publicId], 200);
             }
         } catch(Exception $e) {
             return response()->json(['error' => 'Article Gagal Terupdate'], 500);
@@ -113,9 +111,9 @@ class ArticleController extends Controller
     public function destroy($id) {
         try {
             $article = Article::find($id);
-            // $imageUrl = $article->foto_article;
-            // $publicId = $imageUrl->getPublicId();
-            // cloudinary()->destroy($publicId);
+            $imageUrl = $article->foto_article;
+            $publicId = CloudinaryStorage::getPublicId($imageUrl);
+            cloudinary()->destroy($publicId);
             $delete = $article->delete();
             
             if($delete) {

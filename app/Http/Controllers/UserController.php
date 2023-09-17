@@ -55,7 +55,9 @@ class UserController extends Controller
             } 
             $user = User::find($id);
             if($user->foto_user != null) {
-                cloudinary()->destroy($user->foto_user);
+                $imageUrl = $user->foto_user;
+                $publicId = CloudinaryStorage::getPublicId($imageUrl);
+                cloudinary()->destroy($publicId);
             }
     
             $user->name = $req->name;

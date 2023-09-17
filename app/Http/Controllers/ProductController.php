@@ -109,9 +109,11 @@ class ProductController extends Controller
 
             // mencari id product berdasarkan id yang dimiliki mitra
             $product = Product::find($productId);
-            // $split = explode('/', $product->foto_produk, 2);
-            // $filename = $split[1];
-            // Storage::delete($filename);
+            if($product->foto_produk != null) {
+                $imageUrl = $product->foto_produk;
+                $publicId = CloudinaryStorage::getPublicId($imageUrl);
+                cloudinary()->destroy($publicId);
+            }
 
             $product->nmProduk = $req->nmProduk;
             if ($req->file('foto_produk')) {
@@ -136,9 +138,9 @@ class ProductController extends Controller
     {
         // mencari id product berdasarkan id yang dimiliki mitra
         $product = Product::find($productId);
-        // $split = explode('/', $product->foto_produk, 2);
-        // $filename = $split[1];
-        // Storage::delete($filename);
+        $imageUrl = $product->foto_produk;
+        $publicId = CloudinaryStorage::getPublicId($imageUrl);
+        cloudinary()->destroy($publicId);
         $delete = $product->delete();
         if (!$delete) {
             return response()->json(['error' => "Produk Gagal Dihapus"], 500);
