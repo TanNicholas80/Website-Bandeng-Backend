@@ -15,7 +15,7 @@ class UserController extends Controller
         try {
             $validator = Validator::make($req->all(), [
                 'name' => 'required',
-                'email' => 'required|email|unique:mitras',
+                'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
             ]);
             if ($validator->fails()) {
@@ -33,7 +33,7 @@ class UserController extends Controller
                 return response()->json(['response' => 'Akun Mitra Sukses Terbuat'], 200);
             } 
         } catch(Exception $e) {
-            return response()->json(['error' => 'Akun Mitra Gagal Terbuat'], 500);
+            return response()->json(['error' => $e], 500);
         }
     }
 
