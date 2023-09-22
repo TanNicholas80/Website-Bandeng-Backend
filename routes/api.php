@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\IotDbadengController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -74,3 +75,6 @@ Route::post('register/user', [UserController::class, 'registerUser']);
 Route::post('login/user', [UserController::class, 'loginUser']);
 Route::post('edit/user/{id}', [UserController::class, 'editUser']);
 // User Endpoint End
+// IOT Endpoint Start
+Route::middleware(['auth:sanctum'])->post('mitra/iot', [IotDbadengController::class, 'kirimDB']);
+// IOT Endpoint End

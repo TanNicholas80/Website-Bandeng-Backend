@@ -46,4 +46,9 @@ class Mitra extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Product::class);
     }
+    // satu mitra hanya bisa mengakses satu perangkat iot
+    public function iotdbandeng()
+    {
+        return $this->belongsTo(Iotdbandeng::class);
+    }
 }
