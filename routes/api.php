@@ -76,5 +76,5 @@ Route::post('login/user', [UserController::class, 'loginUser']);
 Route::post('edit/user/{id}', [UserController::class, 'editUser']);
 // User Endpoint End
 // IOT Endpoint Start
-Route::middleware(['auth:sanctum'])->post('mitra/iot', [IotDbadengController::class, 'kirimDB']);
+Route::post('mitra/iot', [IotDbadengController::class, 'kirimDB']);
 // IOT Endpoint End
