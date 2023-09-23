@@ -24,9 +24,9 @@ class Iotdbandeng extends Model
     {
         return 'string';
     }
-    // satu alat IOT bisa diakses oleh banyak mitra
-    public function mitra()
-    {
-        return $this->hasMany(Mitra::class);
-    }
+    // // satu alat IOT bisa diakses oleh banyak mitra
+    // public function mitra()
+    // {
+    //     return $this->hasMany(Mitra::class);
+    // }
 }

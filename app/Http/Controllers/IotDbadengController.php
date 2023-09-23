@@ -22,7 +22,7 @@ class IotDbadengController extends Controller
                 return response()->json(['data' => $iot, 'response' => 'Data Berhasil Dikirim'], 200);
             }
         }catch(Exception $e) {
-            return response()->json(['data' => $iot, 'reponse' => 'Data Gagal Terkirim'] , 500);
+            return response()->json(['error' => $e, 'reponse' => 'Data Gagal Terkirim'] , 500);
         }
     }
 }
