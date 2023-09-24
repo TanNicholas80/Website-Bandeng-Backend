@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('iotdbandeng', function (Blueprint $table) {
+        Schema::create('iotdbandengs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             // FOREIGN KEY to Mitra
             $table->string('power')->default('OFF');

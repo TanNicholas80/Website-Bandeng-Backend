@@ -234,7 +234,7 @@ class MitraController extends Controller
 
     public function mitraLogout(Request $req) {
         $req->user()->currentAccessToken()->delete();
-        return response()->json(['msg' => "Anda Berhasil Logout"], 200);
+        return response()->json(['response' => "Anda Berhasil Logout"], 200);
     }
 
     public function createMitra(Request $req) {
