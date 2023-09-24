@@ -52,7 +52,7 @@ class ProductController extends Controller
 
             $createProduct = $mitra->products()->save($product);
             if ($createProduct) {
-                return response()->json(['data' => "$createProduct"], 200);
+                return response()->json(['data' => "$createProduct", 'response' => "Berhasil Membuat Product"], 200);
             }
         } catch (Exception $e) {
             return response()->json(['error' => "Gagal Membuat Produk"], 500);
