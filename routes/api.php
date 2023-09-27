@@ -57,6 +57,7 @@ Route::middleware(['auth:sanctum'])->post('product/{mitraId}', [ProductControlle
 Route::get('product/read/{mitraId}', [ProductController::class, 'getProductsByMitra']);
 Route::middleware(['auth:sanctum'])->get('product/read-mitra/{mitraId}', [ProductController::class, 'getProductsForMitra']);
 Route::get('product/homepage', [ProductController::class, 'getProductHomepage']);
+Route::get('product/home-aplikasi', [ProductController::class, 'getProductAndMitra']);
 Route::get('produk/desc-produk/{productId}', [ProductController::class, 'spesificProduct']);
 route::middleware(['auth:sanctum'])->post('product/edit/{productId}', [ProductController::class, 'updateProduct']);
 route::middleware(['auth:sanctum'])->delete('product/delete/{productId}', [ProductController::class, 'deleteProduct']);

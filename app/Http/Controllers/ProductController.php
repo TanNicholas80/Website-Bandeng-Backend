@@ -174,4 +174,22 @@ class ProductController extends Controller
         $product = Product::all()->find($productId);
         return response()->json(['data' => $product], 200);
     }
+
+    public function getProductAndMitra() 
+    {
+        $mitra = Mitra::query()
+            ->select('id', 'namaMitra')
+            ->with([
+                'products' => function ($query) {
+                    $query->select('id', 'mitra_id', 'nmProduk', 'foto_produk', 'hrgProduk', 'created_at')
+                        ->orderBy('created_at', 'desc');
+                }
+            ])
+            ->whereHas('products', function ($query) {
+                // Subquery untuk memeriksa apakah mitra memiliki produk
+                $query->orderBy('created_at', 'desc'); // Mengambil hanya 1 produk terbaru dari setiap mitra
+            }) 
+            ->get();
+        return response()->json(['data' => $mitra], 200);
+    }
 }
