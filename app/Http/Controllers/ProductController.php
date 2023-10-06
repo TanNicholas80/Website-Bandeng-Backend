@@ -178,7 +178,7 @@ class ProductController extends Controller
     public function getProductAndMitra() 
     {
         $products = Mitra::join('products', 'mitras.id', '=', 'products.mitra_id')
-                 ->select('products.id', 'mitras.namaMitra', 'products.nmProduk', 'products.foto_produk', 'products.hrgProduk', 'products.beratProduk', 'products.dskProduk', 'products.link', 'products.created_at')
+                 ->select('products.id', 'mitras.namaMitra', 'products.nmProduk', 'products.foto_produk', 'products.hrgProduk', 'products.stok', 'products.beratProduk', 'products.dskProduk', 'products.link', 'products.created_at')
                  ->orderBy('products.created_at', 'desc')
                  ->get();
         return response()->json(['data' => $products], 200);
