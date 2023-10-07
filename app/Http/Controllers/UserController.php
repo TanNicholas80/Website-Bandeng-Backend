@@ -84,6 +84,24 @@ class UserController extends Controller
         if(!Hash::check($req->password, $user->password)) {
             return response()->json(['error' => 'Maaf, Password yang Anda masukkan salah'], 400);
         }
-        return response()->json(['response' => 'Berhasil Login', 'id' => $user->id, 'email' => $user->email], 200);
+        $success['token'] = $user->createToken('auth_token')->plainTextToken;
+        return response()->json(['response' => 'Berhasil Login', 'token' => $success, 'id' => $user->id, 'email' => $user->email], 200);
+    }
+
+    public function getUser($id) {
+        try {
+            $user = User::find($id);
+
+            if ($user) {
+                return response()->json(['data' => $user], 200);
+            } 
+        } catch(Exception $e) {
+            return response()->json(['error' => 'Mitra Tidak Ditemukan'], 500);
+        }
+    }
+
+    public function userLogout(Request $req) {
+        $req->user()->currentAccessToken()->delete();
+        return response()->json(['response' => "Anda Berhasil Logout"], 200);
     }
 }

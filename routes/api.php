@@ -74,7 +74,9 @@ Route::group(['prefix' => 'admin'], function() {
 // User Endpoint Start
 Route::post('register/user', [UserController::class, 'registerUser']);
 Route::post('login/user', [UserController::class, 'loginUser']);
-Route::post('edit/user/{id}', [UserController::class, 'editUser']);
+Route::middleware(['auth:sanctum'])->get('get/user/{id}', [UserController::class, 'getUser']);
+Route::middleware(['auth:sanctum'])->get('logout-user', [UserController::class, 'userLogout']);
+Route::middleware(['auth:sanctum'])->post('edit/user/{id}', [UserController::class, 'editUser']);
 // User Endpoint End
 // IOT Endpoint Start
 Route::post('mitra/iot', [IotDbadengController::class, 'kirimDB']);
