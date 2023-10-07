@@ -38,33 +38,12 @@ class UserController extends Controller
     }
 
     public function editUser(Request $req, $id) {
-        try {
-            $validator = Validator::make($req->all(), [
-                'foto_user' => 'max:5024'
-            ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 400,
-                    'errors' => $validator->errors(),
-                ], 400);
-            }
-            $validator = $req->all();
-            if($req->file('foto_user')) {
-                $validator['foto_user'] = $req->file('foto_user');
-                $uploadedFileUrl = cloudinary()->upload($req->file('foto_user')->getRealPath())->getSecurePath();
-            } 
+        try { 
             $user = User::find($id);
-            if($user->foto_user != null) {
-                $imageUrl = $user->foto_user;
-                $publicId = CloudinaryStorage::getPublicId($imageUrl);
-                cloudinary()->destroy($publicId);
-            }
-    
             $user->name = $req->name;
             $user->alamatUser = $req->alamatUser;
             $user->no_user = $req->no_user;
             $user->email = $req->email;
-            $user->foto_user = $uploadedFileUrl;
         
             $update = $user->update();
     
@@ -103,5 +82,43 @@ class UserController extends Controller
     public function userLogout(Request $req) {
         $req->user()->currentAccessToken()->delete();
         return response()->json(['response' => "Anda Berhasil Logout"], 200);
+    }
+
+    public function editFotoUser(Request $req, $id) {
+        try {
+            $validator = Validator::make($req->all(), [
+                'foto_user' => 'image|file|max:5024',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'errors' => $validator->errors(),
+                ], 400);
+            }
+            $validator = $req->all();
+            if($req->file('foto_user')) {
+                // $imgMitraPath = $req->file('foto_mitra')->store('mitra-images');
+                // $validator['foto_mitra'] = $imgMitraPath;
+                // $imgMitraPath = "storage/" . $imgMitraPath;
+                $validator['foto_user'] = $req->file('foto_user');
+                $uploadedFileUrl = cloudinary()->upload($req->file('foto_user')->getRealPath())->getSecurePath();
+            }
+            $user = User::find($id);
+            if($user->foto_user != null) {
+                $imageUrl = $user->foto_user;
+                $publicId = CloudinaryStorage::getPublicId($imageUrl);
+                cloudinary()->destroy($publicId);
+            }
+
+            $user->foto_user = $uploadedFileUrl;
+    
+            $update = $user->update();
+    
+            if($update) {
+                return response()->json(['response' => 'Foto Mitra Sukses Terupload', 'user' => $req->user()], 200);
+            }
+        } catch(Exception $e) {
+            return response()->json(['error' => 'Foto Mitra Gagal Terupload'], 500);
+        }
     }
 }
